@@ -1,16 +1,20 @@
 'use client';
 
+import { appContext } from '@/context/AppProvider';
 import Serie from '@/interfaces/Serie';
+import handleLocalStorageSave from '@/localStorage/handleSaveLocalStorage';
 import searchSeries from '@/requests/search';
 import { Plus } from 'lucide-react';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import noImg from '../../public/no-img.png';
 
 export default function SearchBar() {
   const [textValue, setTextValue] = useState('');
   const [responseMsg, setResponseMsg] = useState('');
   const [serieList, setSerieList] = useState<Serie[]>([]);
+
+  const { showsOnSchedule, setShowsOnSchedule } = useContext(appContext);
 
   const handleBackSpace = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if ((e.key === 'Backspace' || e.key === 'Delete') && serieList.length > 0) {
@@ -30,9 +34,16 @@ export default function SearchBar() {
     }
   }
 
-  const handleAddSerie = () => {
+  const handleAddSerie = ({ show }: Serie) => {
+    if (!showsOnSchedule.find(({ name }) => show.name === name)) {
+      handleLocalStorageSave('showSchedule', showsOnSchedule, show);
+      setShowsOnSchedule([...showsOnSchedule, show]);
+      setTextValue('');
+    } else {
+      setResponseMsg('Show already on schedule');
+    }
+
     setSerieList([]);
-    setTextValue('');
   }
 
   const handleSearchList = ({ show } : Serie) => {
@@ -47,7 +58,7 @@ export default function SearchBar() {
         
         <span className="text-sm sm:text-lg font-semibold italic">{show.name}</span>
 
-        <button type="button" onClick={ () => handleAddSerie() } className="ml-auto rounded-full bg-zinc-950 hover:scale-110 sm:mr-5">
+        <button type="button" onClick={ () => handleAddSerie({ show }) } className="ml-auto rounded-full bg-zinc-950 hover:scale-110 sm:mr-5">
           <Plus size={40} className="text-green-600" />
         </button>
       </div>
