@@ -9,6 +9,9 @@ const nextConfig = {
         pathname: '/uploads/images/**',
       }
     ]
+  },
+  env: {
+    SERIES_API_URL: process.env.SERIES_API_URL,
   }
 }
 
