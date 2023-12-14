@@ -36,7 +36,7 @@ export default function SearchBar() {
 
   const handleAddSerie = ({ show }: Serie) => {
     if (!showsOnSchedule.find(({ name }) => show.name === name)) {
-      handleLocalStorageSave('showSchedule', showsOnSchedule, show);
+      handleLocalStorageSave(showsOnSchedule, show);
       setShowsOnSchedule([...showsOnSchedule, show]);
       setTextValue('');
     } else {
@@ -66,7 +66,7 @@ export default function SearchBar() {
   }
 
   return (
-    <form onSubmit={ (e) => handleSubmit(e) } className="flex flex-col items-center w-full gap-3">
+    <form onSubmit={ (e) => handleSubmit(e) } className="flex flex-col items-center w-full gap-3 h-36">
       <span className="text-lg italic">Press Enter to Search!</span>
 
       <label className="w-full md:w-[80%] lg:w-[60%] relative" htmlFor="search-bar">

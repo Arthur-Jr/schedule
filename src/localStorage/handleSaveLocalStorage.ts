@@ -1,9 +1,9 @@
 import Show from '@/interfaces/Show';
 
-export default function handleLocalStorageSave(key: string, prevValue: Show[], newValue: Show) {
+export default function handleLocalStorageSave(prevValue: Show[], newValue: Show) {
   if (prevValue.length > 0) {
-    localStorage.setItem(key, JSON.stringify([...prevValue, newValue]));
+    localStorage.setItem('showSchedule', JSON.stringify([...prevValue, newValue]));
   } else {
-    localStorage.setItem(key, JSON.stringify([newValue]));
+    localStorage.setItem('showSchedule', JSON.stringify([newValue]));
   }
 };
