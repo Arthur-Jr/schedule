@@ -17,7 +17,7 @@ export default function LoginForm({ setIsLogging }: props) {
     const response = await login(userData);
 
     if (response.token) {
-      localStorage.setItem(constants.userTokenStorageKey, JSON.stringify(response.token));
+      localStorage.setItem(constants.userTokenStorageKey, response.token);
       setUserData({ usernameEmail: '', password: '' });
       setResponseMsg('');
       setIsLogging(false);
