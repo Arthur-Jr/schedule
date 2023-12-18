@@ -1,8 +1,9 @@
 'use client';
 
 import constants from '@/constants/constants';
+import { appContext } from '@/context/AppProvider';
 import login from '@/requests/login';
-import { Dispatch, FormEvent, SetStateAction, useState } from 'react';
+import { Dispatch, FormEvent, SetStateAction, useContext, useState } from 'react';
 
 interface props {
   setIsLogging: Dispatch<SetStateAction<boolean>>,
@@ -11,6 +12,7 @@ interface props {
 export default function LoginForm({ setIsLogging }: props) {
   const [userData, setUserData] = useState({ usernameEmail: '', password: '' });
   const [responseMsg, setResponseMsg] = useState('');
+  const { setIsLogged } = useContext(appContext);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -21,6 +23,7 @@ export default function LoginForm({ setIsLogging }: props) {
       setUserData({ usernameEmail: '', password: '' });
       setResponseMsg('');
       setIsLogging(false);
+      setIsLogged(true);
     } else {
       setResponseMsg(response.message || '');
     }
