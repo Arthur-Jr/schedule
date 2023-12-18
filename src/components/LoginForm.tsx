@@ -1,5 +1,6 @@
 'use client';
 
+import constants from '@/constants/constants';
 import login from '@/requests/login';
 import { Dispatch, FormEvent, SetStateAction, useState } from 'react';
 
@@ -16,7 +17,7 @@ export default function LoginForm({ setIsLogging }: props) {
     const response = await login(userData);
 
     if (response.token) {
-      localStorage.setItem('userToken', JSON.stringify(response.token));
+      localStorage.setItem(constants.userTokenStorageKey, JSON.stringify(response.token));
       setUserData({ usernameEmail: '', password: '' });
       setResponseMsg('');
       setIsLogging(false);
