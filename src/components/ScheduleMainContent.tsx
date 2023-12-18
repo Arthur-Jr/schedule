@@ -58,7 +58,6 @@ export default function ScheduleMainContent() {
           value={ selectedDay }
           onChange={ ({ target }) => setSelectedDay(target.value) }
           className="rounded-sm p-2 outline-none after:p-5 capitalize text-black"
-          defaultValue={selectedDay}
         >
           { days.map((day) => (
             <option key={day} value={day} className="font-bold text-base">
