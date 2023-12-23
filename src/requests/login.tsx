@@ -1,5 +1,5 @@
 import UserLogin from '@/interfaces/UserLogin';
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 
 const BACKEND_URL = process.env.LOGIN_BACKEND_URL || 'http://localhost:8080';
 
@@ -12,28 +12,28 @@ function checkLoginOption(userData: UserLogin) {
   }
 }
 
-export default async function login(userData: UserLogin): Promise<{ token?: string, message?: string } > {
+export default async function login(userData: UserLogin): Promise<AxiosResponse> {
   try {
     const userLogin = checkLoginOption(userData);
 
     const response = await axios.post(`${BACKEND_URL}/user/login`, userLogin, {
+      withCredentials: true,
       timeout: 10000,
       headers: { 
         'content-type': 'application/json',
       },
     });
 
-    return response.data;
+    return response;
   } catch(err: unknown) {
     if (err instanceof AxiosError) {
       if (err.code === 'ECONNABORTED') {
-        return { message: 'Server is offline, it take atleast 3 minutes to start server!' };
+        return { data: { message: 'Server is offline, it take atleast 3 minutes to start server!' }, status: 500 } as AxiosResponse;
       }
 
-      console.log(err.response?.data);
-      return err.response?.data;
+      return err.response as AxiosResponse;
     }
     
-    return { message: 'Internal Server Error' };
+    return { data: { message: 'Internal Server Error' }, status: 500 } as AxiosResponse;
   }
 }

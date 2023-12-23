@@ -1,8 +1,8 @@
 'use client';
 
-import constants from '@/constants/constants';
 import { appContext } from '@/context/AppProvider';
 import login from '@/requests/login';
+import { HttpStatusCode } from 'axios';
 import { Dispatch, FormEvent, SetStateAction, useContext, useState } from 'react';
 
 interface props {
@@ -18,14 +18,13 @@ export default function LoginForm({ setIsLogging }: props) {
     e.preventDefault();
     const response = await login(userData);
 
-    if (response.token) {
-      localStorage.setItem(constants.userTokenStorageKey, response.token);
+    if (response.status === HttpStatusCode.Ok) {
       setUserData({ usernameEmail: '', password: '' });
       setResponseMsg('');
       setIsLogging(false);
       setIsLogged(true);
     } else {
-      setResponseMsg(response.message || '');
+      setResponseMsg(response.data.message || '');
     }
   };
 
