@@ -15,8 +15,6 @@ export async function middleware(req: NextRequest): Promise<NextResponse | undef
     const secret = new TextEncoder().encode(process.env.JWT_KEY || '');
     
     if (!token) {
-      const response = NextResponse.next();
-      response.cookies.delete(constants.userTokenStorageKey);
       return NextResponse.json({ status: HttpStatusCode.Unauthorized, message: 'Invalid Token!' });
     }
 
@@ -30,8 +28,10 @@ export async function middleware(req: NextRequest): Promise<NextResponse | undef
       }
     });
   } catch(err) {
-    const response = NextResponse.next();
-    response.cookies.delete(constants.userTokenStorageKey);
     return NextResponse.json({ status: HttpStatusCode.Unauthorized, message: 'Invalid Token!' });
   }
+}
+
+export const config = {
+  matcher: '/api/:show*',
 }
