@@ -15,6 +15,7 @@ const nextConfig = {
     REGISTER_PAGE_URL: process.env.REGISTER_PAGE_URL,
     LOGIN_BACKEND_URL: process.env.LOGIN_BACKEND_URL,
     JWT_KEY: process.env.JWT_KEY,
+    MONGODB_URI: process.env.MONGODB_URI,
   }
 }
 
