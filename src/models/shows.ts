@@ -13,6 +13,6 @@ const ShowsSchema = new Schema<{ username: string, shows: Show[] }>({
   ]
 });
 
-const show = mongoose.model('Show', ShowsSchema);
+const show = mongoose.models.Show || mongoose.model('Show', ShowsSchema);
 
 export default show;
