@@ -32,9 +32,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
         setUsername(data.data?.username || '');
       } else {
         const shows = localStorage.getItem(constants.showScheduleStorageKey);
-        if (shows) {
-          setShowsOnSchedule(JSON.parse(shows));
-        }
+        shows && setShowsOnSchedule(JSON.parse(shows));
       }
     };
 
