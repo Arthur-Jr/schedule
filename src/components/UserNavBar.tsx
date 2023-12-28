@@ -2,6 +2,7 @@
 
 import constants from '@/constants/constants';
 import { appContext } from '@/context/AppProvider';
+import logout from '@/requests/logout';
 import { useContext, useState } from 'react';
 import LoginForm from './LoginForm';
 
@@ -14,10 +15,11 @@ export default function UserNavBar() {
     window.open(page , 'register', 'toolbar=0,status=0,width=800,height=800');
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem(constants.userTokenStorageKey);
-    setShowsOnSchedule([]);
+  const handleLogout = async () => {
+    const shows = localStorage.getItem(constants.showScheduleStorageKey);
+    shows ? setShowsOnSchedule(JSON.parse(shows)) : setShowsOnSchedule([]);
     setIsLogged(false);
+    await logout();
   }
 
   return (
@@ -39,6 +41,7 @@ export default function UserNavBar() {
               type="button"
               onClick={ () => handleLogout() }
               className="italic hover:underline underline-offset-2"
+              title='If server is down it will take 3-4 minutes to logout!'
             >
               Logout
             </button>
