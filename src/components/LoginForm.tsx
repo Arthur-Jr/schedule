@@ -1,6 +1,7 @@
 'use client';
 
 import { appContext } from '@/context/AppProvider';
+import getShowsRequest from '@/requests/getShowsRequest';
 import login from '@/requests/login';
 import { HttpStatusCode } from 'axios';
 import { Dispatch, FormEvent, SetStateAction, useContext, useState } from 'react';
@@ -12,13 +13,17 @@ interface props {
 export default function LoginForm({ setIsLogging }: props) {
   const [userData, setUserData] = useState({ usernameEmail: '', password: '' });
   const [responseMsg, setResponseMsg] = useState('');
-  const { setIsLogged } = useContext(appContext);
+  const { setIsLogged, setShowsOnSchedule, setUsername } = useContext(appContext);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const response = await login(userData);
 
     if (response.status === HttpStatusCode.Ok) {
+      const { data } = await getShowsRequest();
+      data.status === HttpStatusCode.Ok && setShowsOnSchedule(data.data?.shows || []);
+      data.status === HttpStatusCode.Ok && setUsername(data.data?.username || '');
+
       setUserData({ usernameEmail: '', password: '' });
       setResponseMsg('');
       setIsLogging(false);
