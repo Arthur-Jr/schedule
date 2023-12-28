@@ -1,5 +1,5 @@
 import Show from '@/interfaces/Show';
-import { addShow, getShows } from '@/services/show.service';
+import { addShow, getShows, removeShow } from '@/services/show.service';
 import { NextRequest, NextResponse } from 'next/server';
  
 type ResponseData = {
@@ -31,3 +31,14 @@ export async function POST(req: NextRequest): Promise<NextResponse<ResponseData>
   }
 };
 
+export async function PUT(req: NextRequest): Promise<NextResponse<ResponseData>> {
+  try {
+    const body: Show = await req.json();
+    const username = req.headers.get('username');
+    await removeShow(username as string, body);
+  
+    return NextResponse.json({ status: 200, message: 'Show Removed!' });
+  } catch(err) {
+    return NextResponse.json({ status: 500, message: 'Internal Server Error!' });
+  }
+};
