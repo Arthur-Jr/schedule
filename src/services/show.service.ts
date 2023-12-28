@@ -19,6 +19,7 @@ export async function getShows(username: string): Promise<{ username: string, sh
   return result;
 }
 
-export async function addShow() {
-  
+export async function addShow(username: string, newShow: Show) {
+  await connectMongoDB();
+  await show.updateOne({ username }, { $push: { shows: newShow } });
 }
