@@ -3,6 +3,7 @@
 import { appContext } from '@/context/AppProvider';
 import Serie from '@/interfaces/Serie';
 import handleLocalStorageSave from '@/localStorage/handleSaveLocalStorage';
+import addNewShow from '@/requests/addNewShow';
 import searchSeries from '@/requests/search';
 import { Plus } from 'lucide-react';
 import Image from 'next/image';
@@ -14,7 +15,7 @@ export default function SearchBar() {
   const [responseMsg, setResponseMsg] = useState('');
   const [serieList, setSerieList] = useState<Serie[]>([]);
 
-  const { showsOnSchedule, setShowsOnSchedule } = useContext(appContext);
+  const { showsOnSchedule, setShowsOnSchedule, isLogged } = useContext(appContext);
 
   const handleBackSpace = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if ((e.key === 'Backspace' || e.key === 'Delete') && serieList.length > 0) {
@@ -34,9 +35,9 @@ export default function SearchBar() {
     }
   }
 
-  const handleAddSerie = ({ show }: Serie) => {
+  const handleAddSerie = async ({ show }: Serie) => {
     if (!showsOnSchedule.find(({ name }) => show.name === name)) {
-      handleLocalStorageSave(showsOnSchedule, show);
+      isLogged ? await addNewShow(show) : handleLocalStorageSave(showsOnSchedule, show);
       setShowsOnSchedule([...showsOnSchedule, show]);
       setTextValue('');
     } else {
