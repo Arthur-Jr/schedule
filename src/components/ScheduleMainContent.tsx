@@ -3,19 +3,22 @@
 import { appContext } from '@/context/AppProvider';
 import Show from '@/interfaces/Show';
 import handleLocalStorageRemove from '@/localStorage/handleRemoveLocalStorage';
+import show from '@/models/shows';
+import removeShowRequest from '@/requests/removeShowRequest';
 import Image from 'next/image';
 import { useContext, useState } from 'react';
 
 export default function ScheduleMainContent() {
   const today = new Date().toLocaleTimeString('en-us', { weekday: 'long' }).split(' ')[0];
-  const { setShowsOnSchedule, showsOnSchedule } = useContext(appContext);
+  const { setShowsOnSchedule, showsOnSchedule, isLogged } = useContext(appContext);
   const [selectedDay, setSelectedDay] = useState(today);
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-  const handleRemoveShow = (shoName: string) => {
-    const newShowsList = showsOnSchedule.filter(({ name }) => name !== shoName);
+  const handleRemoveShow = async (show: Show) => {
+    const newShowsList = showsOnSchedule.filter(({ name }) => name !== show.name);
+    await removeShowRequest(show);
     setShowsOnSchedule(newShowsList);
-    handleLocalStorageRemove(newShowsList);
+    !isLogged && handleLocalStorageRemove(newShowsList);
   };
 
   const displayShows = (show: Show) => {
@@ -38,7 +41,7 @@ export default function ScheduleMainContent() {
 
           <button
             type="button"
-            onClick={ () => handleRemoveShow(show.name) }
+            onClick={ () => handleRemoveShow(show) }
             title="Remove Show"
             className="font-semibold italic w-20 bg-red-600 rounded-lg p-1 hover:scale-105"
           >
