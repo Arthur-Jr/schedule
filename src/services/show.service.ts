@@ -19,7 +19,12 @@ export async function getShows(username: string): Promise<{ username: string, sh
   return result;
 }
 
-export async function addShow(username: string, newShow: Show) {
+export async function addShow(username: string, newShow: Show): Promise<void> {
   await connectMongoDB();
-  await show.updateOne({ username }, { $push: { shows: newShow } });
+  await show.updateOne({ username }, { $addToSet: { shows: newShow } });
+}
+
+export async function removeShow(username: string, showToRemove: Show): Promise<void> {
+  await connectMongoDB();
+  await show.updateOne({ username }, { $pull: { shows: { name: showToRemove.name } } });
 }
