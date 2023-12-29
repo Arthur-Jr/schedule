@@ -1,5 +1,6 @@
 'use client';
 
+import constants from '@/constants/constants';
 import { appContext } from '@/context/AppProvider';
 import getShowsRequest from '@/requests/getShowsRequest';
 import login from '@/requests/login';
@@ -20,7 +21,8 @@ export default function LoginForm({ setIsLogging }: props) {
     const response = await login(userData);
 
     if (response.status === HttpStatusCode.Ok) {
-      const { data } = await getShowsRequest();
+      localStorage.setItem(constants.userTokenStorageKey, response.data.token);
+      const { data } = await getShowsRequest(response.data.token);
       data.status === HttpStatusCode.Ok && setShowsOnSchedule(data.data?.shows || []);
       data.status === HttpStatusCode.Ok && setUsername(data.data?.username || '');
 

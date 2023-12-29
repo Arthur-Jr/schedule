@@ -1,14 +1,13 @@
 import ResponseData from '@/interfaces/ResponseData';
-import ShowOnDb from '@/interfaces/ShowOnDb';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 
-export default async function getShowsRequest(): Promise<AxiosResponse<ResponseData>> {
+export default async function getShowsRequest(token: string): Promise<AxiosResponse<ResponseData>> {
   try {
     const response: AxiosResponse<ResponseData> = await axios.get('/api/show', {
-      withCredentials: true,
       timeout: 10000,
       headers: { 
         'content-type': 'application/json',
+        'Authorization': token,
       },
     });
 

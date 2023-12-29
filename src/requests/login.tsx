@@ -12,17 +12,18 @@ function checkLoginOption(userData: UserLogin) {
   }
 }
 
-export default async function login(userData: UserLogin): Promise<AxiosResponse> {
+export default async function login(userData: UserLogin): Promise<AxiosResponse<{ token: string, message?: string }>> {
   try {
     const userLogin = checkLoginOption(userData);
 
-    const response = await axios.post(`${BACKEND_URL}/user/login`, userLogin, {
+    const response: AxiosResponse<{ token: string }> = await axios.post(`${BACKEND_URL}/user/login-token`, userLogin, {
       withCredentials: true,
       timeout: 10000,
       headers: { 
         'content-type': 'application/json',
       },
     });
+    console.log(response);
 
     return response;
   } catch(err: unknown) {
