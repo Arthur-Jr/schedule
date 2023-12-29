@@ -10,7 +10,7 @@ import { useContext, useState } from 'react';
 
 export default function ScheduleMainContent() {
   const today = new Date().toLocaleTimeString('en-us', { weekday: 'long' }).split(' ')[0];
-  const { setShowsOnSchedule, showsOnSchedule } = useContext(appContext);
+  const { setShowsOnSchedule, showsOnSchedule, username } = useContext(appContext);
   const [selectedDay, setSelectedDay] = useState(today);
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -54,21 +54,25 @@ export default function ScheduleMainContent() {
 
   return (
     <main className="flex flex-col items-start gap-5 w-full h-full">
-      <label htmlFor="days" className="font-semibold">
-        <select
-          name="days"
-          id="days"
-          value={ selectedDay }
-          onChange={ ({ target }) => setSelectedDay(target.value) }
-          className="rounded-sm p-2 outline-none after:p-5 capitalize text-black"
-        >
-          { days.map((day) => (
-            <option key={day} value={day} className="font-bold text-base">
-              { day }
-            </option>
-          )) }
-        </select>
-      </label>
+      <div className="flex gap-10 items-center">
+        <label htmlFor="days" className="font-semibold">
+          <select
+            name="days"
+            id="days"
+            value={ selectedDay }
+            onChange={ ({ target }) => setSelectedDay(target.value) }
+            className="rounded-sm p-2 outline-none after:p-5 capitalize text-black"
+          >
+            { days.map((day) => (
+              <option key={day} value={day} className="font-bold text-base">
+                { day }
+              </option>
+            )) }
+          </select>
+        </label>
+
+        { username && <h2 className="text-lg md:text-2xl font-bold italic text-center">{`Welcome, ${username}`}</h2> }
+      </div>
 
       <section className="w-full flex flex-col items-center gap-5 p-5 min-[525px]:flex-wrap min-[525px]:flex-row md:gap-10">
         {showsOnSchedule.map((show) => displayShows(show) )}
