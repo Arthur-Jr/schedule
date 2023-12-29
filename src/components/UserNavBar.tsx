@@ -2,6 +2,7 @@
 
 import constants from '@/constants/constants';
 import { appContext } from '@/context/AppProvider';
+import handleLogoutLocalStorage from '@/localStorage/handleLogoutLocalStorage';
 import { useContext, useState } from 'react';
 import LoginForm from './LoginForm';
 
@@ -15,9 +16,7 @@ export default function UserNavBar() {
   };
 
   const handleLogout = async () => {
-    localStorage.removeItem(constants.userTokenStorageKey);
-    const shows = localStorage.getItem(constants.showScheduleStorageKey);
-    shows ? setShowsOnSchedule(JSON.parse(shows)) : setShowsOnSchedule([]);
+    handleLogoutLocalStorage(setShowsOnSchedule);
     setUsername('');
     setIsLogged(false);
   }
