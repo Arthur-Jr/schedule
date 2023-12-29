@@ -3,9 +3,12 @@
 import constants from '@/constants/constants';
 import { appContext } from '@/context/AppProvider';
 import Serie from '@/interfaces/Serie';
+import Show from '@/interfaces/Show';
+import handleLogoutLocalStorage from '@/localStorage/handleLogoutLocalStorage';
 import handleLocalStorageSave from '@/localStorage/handleSaveLocalStorage';
 import addNewShow from '@/requests/addNewShow';
 import searchSeries from '@/requests/search';
+import { HttpStatusCode } from 'axios';
 import { Plus } from 'lucide-react';
 import Image from 'next/image';
 import { useContext, useState } from 'react';
@@ -15,7 +18,7 @@ export default function SearchBar() {
   const [textValue, setTextValue] = useState('');
   const [responseMsg, setResponseMsg] = useState('');
   const [serieList, setSerieList] = useState<Serie[]>([]);
-  const { showsOnSchedule, setShowsOnSchedule } = useContext(appContext);
+  const { showsOnSchedule, setShowsOnSchedule, setIsLogged, setUsername } = useContext(appContext);
 
   const handleBackSpace = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if ((e.key === 'Backspace' || e.key === 'Delete') && serieList.length > 0) {
@@ -35,12 +38,31 @@ export default function SearchBar() {
     }
   }
 
+  const addNewShowOnDB = async (show: Show, token: string) => {
+    const { data } = await addNewShow(show, token);
+    if (data.status === HttpStatusCode.Created) {
+      setShowsOnSchedule([...showsOnSchedule, show]);
+      setTextValue('');
+      return;
+    }
+
+    if (data.status === HttpStatusCode.Unauthorized) {
+      handleLogoutLocalStorage(setShowsOnSchedule);
+      setUsername('');
+      setIsLogged(false);
+    }
+  }
+
+  const addNewShowOnLocal =  (show: Show) => {
+    handleLocalStorageSave(showsOnSchedule, show);
+    setShowsOnSchedule([...showsOnSchedule, show]);
+    setTextValue('');
+  }
+
   const handleAddSerie = async ({ show }: Serie) => {
     if (!showsOnSchedule.find(({ name }) => show.name === name)) {
       const token = localStorage.getItem(constants.userTokenStorageKey);
-      token ? await addNewShow(show, token) : handleLocalStorageSave(showsOnSchedule, show);
-      setShowsOnSchedule([...showsOnSchedule, show]);
-      setTextValue('');
+      token ? await addNewShowOnDB(show, token) : addNewShowOnLocal(show);
     } else {
       setResponseMsg('Show already on schedule');
     }
