@@ -24,8 +24,14 @@ function AppProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const getShow = async () => {
-      const { data } = await getShowsRequest();
+      const token = localStorage.getItem(constants.userTokenStorageKey);
+      if (!token) {
+        const shows = localStorage.getItem(constants.showScheduleStorageKey);
+        shows && setShowsOnSchedule(JSON.parse(shows));
+        return;
+      }
 
+      const { data } = await getShowsRequest(token);
       if (data.status === HttpStatusCode.Ok) {
         setIsLogged(true);
         setShowsOnSchedule(data.data?.shows || []);
