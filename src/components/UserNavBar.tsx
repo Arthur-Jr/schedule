@@ -7,7 +7,7 @@ import LoginForm from './LoginForm';
 
 export default function UserNavBar() {
   const [isLogging, setIsLogging] = useState(false);
-  const { isLogged, setIsLogged, setShowsOnSchedule } = useContext(appContext);
+  const { isLogged, setIsLogged, setShowsOnSchedule, setUsername } = useContext(appContext);
 
   const handleRegister = () => {
     const page = process.env.REGISTER_PAGE_URL || '';
@@ -18,6 +18,7 @@ export default function UserNavBar() {
     localStorage.removeItem(constants.userTokenStorageKey);
     const shows = localStorage.getItem(constants.showScheduleStorageKey);
     shows ? setShowsOnSchedule(JSON.parse(shows)) : setShowsOnSchedule([]);
+    setUsername('');
     setIsLogged(false);
   }
 
