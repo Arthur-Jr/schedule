@@ -3,22 +3,42 @@
 import constants from '@/constants/constants';
 import { appContext } from '@/context/AppProvider';
 import Show from '@/interfaces/Show';
+import handleLogoutLocalStorage from '@/localStorage/handleLogoutLocalStorage';
 import handleLocalStorageRemove from '@/localStorage/handleRemoveLocalStorage';
 import removeShowRequest from '@/requests/removeShowRequest';
+import { HttpStatusCode } from 'axios';
 import Image from 'next/image';
 import { useContext, useState } from 'react';
 
 export default function ScheduleMainContent() {
   const today = new Date().toLocaleTimeString('en-us', { weekday: 'long' }).split(' ')[0];
-  const { setShowsOnSchedule, showsOnSchedule, username } = useContext(appContext);
+  const { setShowsOnSchedule, showsOnSchedule, username, setUsername, setIsLogged } = useContext(appContext);
   const [selectedDay, setSelectedDay] = useState(today);
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+  const removeShowOnDB = async (show: Show, token: string, newShowsList: Show[]) => {
+    const { data } = await removeShowRequest(show, token);
+    if (data.status === HttpStatusCode.Ok) {
+      setShowsOnSchedule(newShowsList);
+      return;
+    }
+
+    if (data.status === HttpStatusCode.Unauthorized) {
+      handleLogoutLocalStorage(setShowsOnSchedule);
+      setUsername('');
+      setIsLogged(false);
+    }
+  }
+
+  const removeShowOnLocal = (newShowsList: Show[]) => {
+    handleLocalStorageRemove(showsOnSchedule);
+    setShowsOnSchedule(newShowsList);
+  }
 
   const handleRemoveShow = async (show: Show) => {
     const newShowsList = showsOnSchedule.filter(({ name }) => name !== show.name);
     const token = localStorage.getItem(constants.userTokenStorageKey);
-    token ? await removeShowRequest(show, token) : handleLocalStorageRemove(newShowsList);
-    setShowsOnSchedule(newShowsList);
+    token ? await removeShowOnDB(show, token, newShowsList) : removeShowOnLocal(newShowsList);
   };
 
   const displayShows = (show: Show) => {

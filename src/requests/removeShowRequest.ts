@@ -1,10 +1,11 @@
+import ResponseData from '@/interfaces/ResponseData';
 import Show from '@/interfaces/Show';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 
 
-export default async function removeShowRequest(show: Show, token: string): Promise<AxiosResponse> {
+export default async function removeShowRequest(show: Show, token: string): Promise<AxiosResponse<ResponseData>> {
   try {
-    const response = await axios.put(`/api/show`, show, {
+    const response: AxiosResponse<ResponseData> = await axios.put(`/api/show`, show, {
       timeout: 10000,
       headers: { 
         'content-type': 'application/json',
