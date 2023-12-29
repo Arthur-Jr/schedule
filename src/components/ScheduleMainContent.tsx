@@ -1,24 +1,24 @@
 'use client';
 
+import constants from '@/constants/constants';
 import { appContext } from '@/context/AppProvider';
 import Show from '@/interfaces/Show';
 import handleLocalStorageRemove from '@/localStorage/handleRemoveLocalStorage';
-import show from '@/models/shows';
 import removeShowRequest from '@/requests/removeShowRequest';
 import Image from 'next/image';
 import { useContext, useState } from 'react';
 
 export default function ScheduleMainContent() {
   const today = new Date().toLocaleTimeString('en-us', { weekday: 'long' }).split(' ')[0];
-  const { setShowsOnSchedule, showsOnSchedule, isLogged } = useContext(appContext);
+  const { setShowsOnSchedule, showsOnSchedule } = useContext(appContext);
   const [selectedDay, setSelectedDay] = useState(today);
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
   const handleRemoveShow = async (show: Show) => {
     const newShowsList = showsOnSchedule.filter(({ name }) => name !== show.name);
-    await removeShowRequest(show);
+    const token = localStorage.getItem(constants.userTokenStorageKey);
+    token ? await removeShowRequest(show, token) : handleLocalStorageRemove(newShowsList);
     setShowsOnSchedule(newShowsList);
-    !isLogged && handleLocalStorageRemove(newShowsList);
   };
 
   const displayShows = (show: Show) => {
