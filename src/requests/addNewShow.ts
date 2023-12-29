@@ -1,9 +1,10 @@
+import ResponseData from '@/interfaces/ResponseData';
 import Show from '@/interfaces/Show';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 
-export default async function addNewShow(show: Show, token: string): Promise<AxiosResponse> {
+export default async function addNewShow(show: Show, token: string): Promise<AxiosResponse<ResponseData>> {
   try {
-    const response = await axios.post(`/api/show`, show, {
+    const response: AxiosResponse<ResponseData> = await axios.post(`/api/show`, show, {
       timeout: 10000,
       headers: { 
         'content-type': 'application/json',
