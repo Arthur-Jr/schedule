@@ -1,5 +1,6 @@
 'use client';
 
+import constants from '@/constants/constants';
 import { appContext } from '@/context/AppProvider';
 import Serie from '@/interfaces/Serie';
 import handleLocalStorageSave from '@/localStorage/handleSaveLocalStorage';
@@ -14,8 +15,7 @@ export default function SearchBar() {
   const [textValue, setTextValue] = useState('');
   const [responseMsg, setResponseMsg] = useState('');
   const [serieList, setSerieList] = useState<Serie[]>([]);
-
-  const { showsOnSchedule, setShowsOnSchedule, isLogged } = useContext(appContext);
+  const { showsOnSchedule, setShowsOnSchedule } = useContext(appContext);
 
   const handleBackSpace = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if ((e.key === 'Backspace' || e.key === 'Delete') && serieList.length > 0) {
@@ -37,7 +37,8 @@ export default function SearchBar() {
 
   const handleAddSerie = async ({ show }: Serie) => {
     if (!showsOnSchedule.find(({ name }) => show.name === name)) {
-      isLogged ? await addNewShow(show) : handleLocalStorageSave(showsOnSchedule, show);
+      const token = localStorage.getItem(constants.userTokenStorageKey);
+      token ? await addNewShow(show, token) : handleLocalStorageSave(showsOnSchedule, show);
       setShowsOnSchedule([...showsOnSchedule, show]);
       setTextValue('');
     } else {
