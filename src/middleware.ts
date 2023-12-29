@@ -11,7 +11,7 @@ interface jwtCustomPayload extends jwt.JWTVerifyResult<jwt.JWTPayload> {
 
 export async function middleware(req: NextRequest): Promise<NextResponse | undefined> {
   try {
-    const token = req.cookies.get(constants.userTokenStorageKey)?.value;
+    const token = req.headers.get('Authorization');
     const secret = new TextEncoder().encode(process.env.JWT_KEY || '');
     
     if (!token) {
