@@ -5,7 +5,9 @@ import { appContext } from '@/context/AppProvider';
 import getShowsRequest from '@/requests/getShowsRequest';
 import login from '@/requests/login';
 import { HttpStatusCode } from 'axios';
+import Image from 'next/image';
 import { Dispatch, FormEvent, SetStateAction, useContext, useState } from 'react';
+import loadingGif from '../../public/loading.gif';
 
 interface props {
   setIsLogging: Dispatch<SetStateAction<boolean>>,
@@ -14,13 +16,15 @@ interface props {
 export default function LoginForm({ setIsLogging }: props) {
   const [userData, setUserData] = useState({ usernameEmail: '', password: '' });
   const [responseMsg, setResponseMsg] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const { setIsLogged, setShowsOnSchedule, setUsername } = useContext(appContext);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
     const response = await login(userData);
 
-    if (response.status === HttpStatusCode.Ok) {
+    if (response && response.status === HttpStatusCode.Ok) {
       localStorage.setItem(constants.userTokenStorageKey, response.data.token);
       const { data } = await getShowsRequest(response.data.token);
       data.status === HttpStatusCode.Ok && setShowsOnSchedule(data.data?.shows || []);
@@ -31,7 +35,8 @@ export default function LoginForm({ setIsLogging }: props) {
       setIsLogging(false);
       setIsLogged(true);
     } else {
-      setResponseMsg(response.data.message || '');
+      response ? setResponseMsg(response.data.message || '') : setResponseMsg('Something went wrong!');
+      setIsLoading(false);
     }
   };
 
@@ -67,6 +72,8 @@ export default function LoginForm({ setIsLogging }: props) {
       <button title="Login" type="submit" className="p-1 rounded-md bg-zinc-100 text-black italic font-semibold hover:scale-105">
         Login
       </button>
+
+      { isLoading && <Image src={ loadingGif } alt="Loading..." className="w-20 h-20 self-center mt-2" />  }
 
       { responseMsg.length > 0 && <span className="text-xs text-center font-semibold italic text-red-600">{responseMsg}</span> }
     </form>
