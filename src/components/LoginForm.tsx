@@ -22,6 +22,7 @@ export default function LoginForm({ setIsLogging }: props) {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
+    setResponseMsg('');
     const response = await login(userData);
 
     if (response && response.status === HttpStatusCode.Ok) {
